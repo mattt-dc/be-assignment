@@ -1,6 +1,6 @@
 import { RegisteredStreamPickupEntity } from './registered_stream_pickup.entity';
 
-export class CustomerEntity {
+export class CustomerEntity implements Identifiable {
   id!: string;
   name!: string;
   address!: string;

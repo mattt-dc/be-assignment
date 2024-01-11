@@ -1,6 +1,6 @@
 import { WasteStreamEntity } from './waste_stream.entity';
 
-export class ServiceProviderCoverageEntity {
+export class ServiceProviderCoverageEntity implements Identifiable {
   id!: string;
   waste_stream!: WasteStreamEntity;
   postal_code_start!: string;

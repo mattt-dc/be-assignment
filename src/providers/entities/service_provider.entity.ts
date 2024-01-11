@@ -1,6 +1,6 @@
 import { ServiceProviderCoverageEntity } from './service_provider_coverage.entity';
 
-export class ServiceProviderEntity {
+export class ServiceProviderEntity implements Identifiable {
   id!: string;
   name!: string;
   address!: string;

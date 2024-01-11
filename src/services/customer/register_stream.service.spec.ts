@@ -53,6 +53,7 @@ describe('RegisterStreamService', () => {
         name: 'customer-name',
         address: 'customer-address',
         registered_stream_pickups: [],
+        postal_code: 'customer-postal-code',
       });
 
       jest.spyOn(customerRepository, 'save').mockReturnValueOnce(undefined);
@@ -68,6 +69,7 @@ describe('RegisterStreamService', () => {
         id: 'customer-id',
         name: 'customer-name',
         address: 'customer-address',
+        postal_code: 'customer-postal-code',
         registered_stream_pickups: [
           {
             id: expect.any(String),
