@@ -52,7 +52,7 @@ describe('RegisterStreamService', () => {
         id: 'customer-id',
         name: 'customer-name',
         address: 'customer-address',
-        registered_stream_pickups: [],
+        registered_stream_pickup_ids: [],
         postal_code: 'customer-postal-code',
       });
 

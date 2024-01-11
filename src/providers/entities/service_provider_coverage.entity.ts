@@ -1,8 +1,6 @@
-import { WasteStreamEntity } from './waste_stream.entity';
-
 export class ServiceProviderCoverageEntity implements Identifiable {
   id!: string;
-  waste_stream!: WasteStreamEntity;
+  waste_stream_id!: string;
   postal_code_start!: string;
   postal_code_end!: string;
   weekday_availability!: Weekday[];

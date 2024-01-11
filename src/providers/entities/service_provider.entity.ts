@@ -1,8 +1,7 @@
-import { ServiceProviderCoverageEntity } from './service_provider_coverage.entity';
-
 export class ServiceProviderEntity implements Identifiable {
   id!: string;
   name!: string;
   address!: string;
-  coverages!: ServiceProviderCoverageEntity[];
+  coverage_ids!: string[];
+  registered_stream_pickup_ids!: string[];
 }

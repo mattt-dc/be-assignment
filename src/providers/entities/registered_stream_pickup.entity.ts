@@ -1,9 +1,7 @@
-import { WasteStreamEntity } from './waste_stream.entity';
-import { ServiceProviderEntity } from './service_provider.entity';
-
 export class RegisteredStreamPickupEntity implements Identifiable {
   id!: string;
-  waste_stream!: WasteStreamEntity;
-  service_provider!: ServiceProviderEntity;
+  customer_id!: string;
+  waste_stream_id!: string;
+  service_provider_id!: string;
   pickup_date!: Date;
 }
