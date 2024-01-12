@@ -2,6 +2,7 @@ import { RegisterStreamService } from './register_stream.service';
 import { CustomerRepository } from '../../providers/adapters/customer.repository';
 import { WasteStreamEntity } from '../../providers/entities/waste_stream.entity';
 import { ServiceProviderEntity } from '../../providers/entities/service_provider.entity';
+import { CustomerEntity } from 'src/providers/entities/customer.entity';
 
 //3. Testability
 describe('RegisterStreamService', () => {
@@ -9,7 +10,7 @@ describe('RegisterStreamService', () => {
   let registerStreamService: RegisterStreamService;
 
   beforeEach(() => {
-    customerRepository = new CustomerRepository();
+    customerRepository = new CustomerRepository(CustomerEntity);
     registerStreamService = new RegisterStreamService(customerRepository);
   });
 
@@ -19,7 +20,7 @@ describe('RegisterStreamService', () => {
 
   describe('registerStream', () => {
     it(`should throw an error if the customer doesn't exist`, () => {
-      jest.spyOn(customerRepository, 'findById').mockReturnValueOnce(undefined);
+      jest.spyOn(customerRepository, 'findById').mockResolvedValueOnce(null);
 
       const response = registerStreamService.registerStream(
         'customer-id',
@@ -48,15 +49,15 @@ describe('RegisterStreamService', () => {
 
     //1. Implementation
     it(`should register the stream`, () => {
-      jest.spyOn(customerRepository, 'findById').mockReturnValueOnce({
+      jest.spyOn(customerRepository, 'findById').mockResolvedValueOnce({
         id: 'customer-id',
         name: 'customer-name',
         address: 'customer-address',
-        registered_stream_pickup_ids: [],
+        registered_stream_pickups: [],
         postal_code: 'customer-postal-code',
       });
 
-      jest.spyOn(customerRepository, 'save').mockReturnValueOnce(undefined);
+      jest.spyOn(customerRepository, 'save').mockResolvedValueOnce(undefined);
 
       const response = registerStreamService.registerStream(
         'customer-id',

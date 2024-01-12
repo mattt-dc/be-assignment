@@ -1,3 +1,3 @@
 interface Readable<T> {
-    findById(id: string): T | undefined;
+    findById(id: string): Promise<T | null>;
 }

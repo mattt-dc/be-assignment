@@ -16,13 +16,13 @@ export type RegisterStreamResponse =
 export class RegisterStreamService {
   constructor(private readonly customerRepository: CustomerRepository) {}
 
-  public registerStream(
+  public async registerStream(
     customerId: string,
     streamId: string,
     serviceProviderId: string,
     pickupDate: Date,
-  ): RegisterStreamResponse {
-    const customer = this.customerRepository.findById(customerId);
+  ): Promise<RegisterStreamResponse> {
+    const customer = await this.customerRepository.findById(customerId);
 
     if (!customer) {
       return {
@@ -44,14 +44,14 @@ export class RegisterStreamService {
       - Can you spot improvements to avoid duplicates? (immutability vs mutability perhaps?)
     */
 
-    customer.registered_stream_pickups.push({
-      id: crypto.randomUUID(),
-      waste_stream: new WasteStreamEntity(),
-      service_provider: new ServiceProviderEntity(),
-      pickup_date: pickupDate,
-    });
+    // customer.registered_stream_pickups.push({
+    //   id: crypto.randomUUID(),
+    //   waste_stream: new WasteStreamEntity(),
+    //   service_provider: new ServiceProviderEntity(),
+    //   pickup_date: pickupDate,
+    // });
 
-    this.customerRepository.save(customer);
+    // this.customerRepository.save(customer);
 
     return customer;
   }

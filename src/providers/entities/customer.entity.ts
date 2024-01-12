@@ -1,7 +1,23 @@
+import { Entity, PrimaryGeneratedColumn, Column, OneToMany } from 'typeorm';
+import { RegisteredStreamPickupEntity } from './registered_stream_pickup.entity';
+
+@Entity()
 export class CustomerEntity implements Identifiable {
+  @PrimaryGeneratedColumn('uuid')
   id!: string;
+
+  @Column()
   name!: string;
+
+  @Column()
   address!: string;
+
+  @Column()
   postal_code!: string;
-  registered_stream_pickup_ids!: string[];
+
+  @OneToMany(
+    () => RegisteredStreamPickupEntity,
+    (pickup: RegisteredStreamPickupEntity) => pickup.customer
+  )
+  registered_stream_pickups!: RegisteredStreamPickupEntity[];
 }

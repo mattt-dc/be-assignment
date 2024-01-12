@@ -1,17 +1,17 @@
+import { Repository, getRepository } from 'typeorm';
+
 export class BaseRepository<T extends Identifiable> implements Writable<T>, Readable<T> {
-    private readonly items: T[] = [];
+    private repository: Repository<T>;
 
-    public save(item: T): void {
-        const existingItem = this.findById(item.id);
-
-        if (existingItem) {
-            Object.assign(existingItem, item);
-        } else {
-            this.items.push(item);
-        }
+    constructor(entityClass: new () => T) {
+        this.repository = getRepository(entityClass);
     }
 
-    public findById(id: string): T | undefined {
-        return this.items.find(item => item.id === id);
+    public async save(item: T): Promise<void> {
+        await this.repository.save(item);
+    }
+
+    public async findById(id: string): Promise<T | null> {
+        return await this.repository.findOneById(id);
     }
 }

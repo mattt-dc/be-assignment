@@ -1,3 +1,3 @@
 interface Writable<T> {
-    save(item: T): void;
+    save(item: T): Promise<void>;
 }
