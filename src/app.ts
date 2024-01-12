@@ -13,6 +13,7 @@ import { CustomerEntity } from './providers/entities/customer.entity';
 import { ServiceProviderAvailabilityService } from './services/availability/service_provider_availability.service';
 import { RegisterStreamService } from './services/customer/register_stream.service';
 import { getDbClient } from './providers/adapters/db';
+import { ServiceProviderEntity } from './providers/entities/service_provider.entity';
 
 class App {
   private connection!: Connection;
@@ -32,7 +33,7 @@ class App {
     this.connection = await getDbClient();
 
     this.customerRepository = new CustomerRepository(CustomerEntity);
-    this.serviceProviderRepository = new ServiceProviderRepository();
+    this.serviceProviderRepository = new ServiceProviderRepository(ServiceProviderEntity);
 
     this.registerStreamService = new RegisterStreamService(this.customerRepository);
     this.serviceProviderAvailabilityService = new ServiceProviderAvailabilityService(
