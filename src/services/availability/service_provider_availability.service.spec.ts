@@ -1,5 +1,6 @@
 import { ServiceProviderAvailabilityService } from './service_provider_availability.service';
 import { ServiceProviderRepository } from '../../providers/adapters/service_provider.repository';
+import { ServiceProviderEntity } from 'src/providers/entities/service_provider.entity';
 
 //3. Testability
 describe('ServiceProviderAvailabilityService', () => {
@@ -7,7 +8,7 @@ describe('ServiceProviderAvailabilityService', () => {
   let serviceProviderAvailabilityService: ServiceProviderAvailabilityService;
 
   beforeEach(() => {
-    serviceProviderRepository = new ServiceProviderRepository();
+    serviceProviderRepository = new ServiceProviderRepository(ServiceProviderEntity);
     serviceProviderAvailabilityService = new ServiceProviderAvailabilityService(
       serviceProviderRepository,
     );

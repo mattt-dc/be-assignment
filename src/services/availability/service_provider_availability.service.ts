@@ -8,7 +8,7 @@ import { ServiceProviderRepository } from '../../providers/adapters/service_prov
 export class ServiceProviderAvailabilityService {
   constructor(private serviceProviderRepository: ServiceProviderRepository) {}
 
-  public findAvailabilityAt(postalCode: string, date: Date): any[] {
-    return [];
+  public async findAvailabilityAt(postalCode: string, date: Date): Promise<{ serviceProviderName: string, wasteStreamLabel: string }[]> {
+    return this.serviceProviderRepository.findByPostalCodeAndDate(postalCode, date);
   }
 }

@@ -40,11 +40,37 @@ class App {
       this.serviceProviderRepository,
     );
 
-    console.log('App ran correctly');
+    await this.test();
   }
 
   async stop() {
     await this.connection.destroy();
+  }
+
+  async test() {
+    const results = await Promise.all([
+      this.serviceProviderAvailabilityService.findAvailabilityAt('1010', new Date('2023-10-02')),
+      this.serviceProviderAvailabilityService.findAvailabilityAt('1010', new Date('2023-10-04')),
+      this.serviceProviderAvailabilityService.findAvailabilityAt('2000', new Date('2023-10-05')),
+      this.serviceProviderAvailabilityService.findAvailabilityAt('1010', new Date('2023-10-08')),
+      this.serviceProviderAvailabilityService.findAvailabilityAt('0000', new Date('2023-10-03')),
+    ]);
+  
+    const expectedResults = [
+      [{ serviceProviderName: 'Unwasted', wasteStreamLabel: 'paper' }, { serviceProviderName: 'Unwasted', wasteStreamLabel: 'metal' }, { serviceProviderName: 'Bluecollection', wasteStreamLabel: 'metal' }],
+      [{ serviceProviderName: 'Unwasted', wasteStreamLabel: 'metal' }, { serviceProviderName: 'Bluecollection', wasteStreamLabel: 'metal' }],
+      [{ serviceProviderName: 'Bluecollection', wasteStreamLabel: 'metal' }],
+      [],
+      [],
+    ];
+  
+    for (let i = 0; i < results.length; i++) {
+      if (JSON.stringify(results[i]) !== JSON.stringify(expectedResults[i])) {
+        console.error(`Test failed for index ${i}. Expected ${JSON.stringify(expectedResults[i])}, but got ${JSON.stringify(results[i])}`);
+      }
+    }
+
+    console.log('Tests ran correctly');
   }
 }
 
