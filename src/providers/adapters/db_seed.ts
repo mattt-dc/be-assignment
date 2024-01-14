@@ -23,10 +23,10 @@ export async function seedDatabase(connection: Connection) {
     ];
 
     await connection.createQueryBuilder()
-    .insert()
-    .into('service_provider_entity')
-    .values(serviceProviders)
-    .execute();
+        .insert()
+        .into('service_provider_entity')
+        .values(serviceProviders)
+        .execute();
 
     const coverages = [
         { 
@@ -34,14 +34,14 @@ export async function seedDatabase(connection: Connection) {
           waste_stream: 'de10e229-d599-4c1d-bfba-dc041f5eace4', 
           postal_code_start: '1010', 
           postal_code_end: '1020', 
-          weekday_availability: [Weekday.Monday, Weekday.Tuesday, Weekday.Thursday] 
+          weekday_availability: [Weekday.Monday, Weekday.Tuesday, Weekday.Thursday],
         },
         { 
           service_provider: 'de10e229-d599-4c1d-bfba-dc041f5eace8', 
           waste_stream: 'de10e229-d599-4c1d-bfba-dc041f5eace3', 
           postal_code_start: '1010', 
           postal_code_end: '1020', 
-          weekday_availability: [Weekday.Monday, Weekday.Wednesday, Weekday.Friday] 
+          weekday_availability: [Weekday.Monday, Weekday.Wednesday, Weekday.Friday],
         },
         { 
           service_provider: 'de10e229-d599-4c1d-bfba-dc041f5eace9', 
@@ -49,7 +49,7 @@ export async function seedDatabase(connection: Connection) {
           postal_code_start: '1000', 
           postal_code_end: '9999', 
           weekday_availability: [Weekday.Monday, Weekday.Tuesday, Weekday.Wednesday, 
-            Weekday.Thursday, Weekday.Friday] 
+            Weekday.Thursday, Weekday.Friday],
         },
     ];
     
@@ -57,5 +57,18 @@ export async function seedDatabase(connection: Connection) {
         .insert()
         .into('service_provider_coverage_entity')
         .values(coverages)
+        .execute();
+
+    const customers = [
+        { id: 'de10e229-d599-4c1d-bfba-dc041f5eace1', name: 'test customer', postal_code: '1010',
+            address: 'test address' },
+        { id: 'de10e229-d599-4c1d-bfba-dc041f5eace0', name: 'test customer2', postal_code: '2000',
+            address: 'test address2' },
+    ];
+
+    await connection.createQueryBuilder()
+        .insert()
+        .into('customer_entity')
+        .values(customers)
         .execute();
 }
