@@ -1,20 +1,24 @@
 import { CustomerRepository } from '../../providers/adapters/customer.repository';
-import { CustomerEntity } from '../../providers/entities/customer.entity';
-import { WasteStreamEntity } from '../../providers/entities/waste_stream.entity';
-import { ServiceProviderEntity } from '../../providers/entities/service_provider.entity';
-import * as crypto from 'crypto';
+import { ServiceProviderRepository } from 'src/providers/adapters/service_provider.repository';
+import { WasteStreamRepository } from 'src/providers/adapters/waste_stream.repository';
+import { ServiceProviderAvailabilityService } from '../availability/service_provider_availability.service';
+import { RegisteredStreamPickupRepository } from 'src/providers/adapters/registered_stream_pickup.repository';
+import { RegisteredStreamPickupEntity } from 'src/providers/entities/registered_stream_pickup.entity';
 
-/*
-  2. Refactoring
-*/
 export type RegisterStreamResponse =
-  | CustomerEntity
+  | RegisteredStreamPickupEntity
   | {
       error: string;
     };
 
 export class RegisterStreamService {
-  constructor(private readonly customerRepository: CustomerRepository) {}
+  constructor(
+    private readonly customerRepository: CustomerRepository,
+    private readonly serviceProviderRepository: ServiceProviderRepository,
+    private readonly wasteStreamRepository: WasteStreamRepository,
+    private readonly registeredStreamPickupRepository: RegisteredStreamPickupRepository,
+    private readonly serviceProviderAvailabilityService: ServiceProviderAvailabilityService,
+  ) {}
 
   public async registerStream(
     customerId: string,
@@ -30,29 +34,43 @@ export class RegisterStreamService {
       };
     }
 
-    /*
-      1. Implementation & 2. Refactoring
-      - How do you make sure the stream exists?
-      - How do you make sure the service provider exists?
-      - How do you make sure that the pickup date is available for the service provider?
-      - How do you make sure that the customer in question is within the service provider's area?
+    const serviceProvider = await this.serviceProviderRepository.findById(serviceProviderId);
 
-      4. Opportunities
-      - How about a Rich Domain Model instead of an Anemic Domain Model?
-      - How about a Domain Event to notify the service provider?
-      - How about a Domain Event to notify the customer?
-      - Can you spot improvements to avoid duplicates? (immutability vs mutability perhaps?)
-    */
+    if (!serviceProvider) {
+      return {
+        error: 'Service provider not found',
+      };
+    }
 
-    // customer.registered_stream_pickups.push({
-    //   id: crypto.randomUUID(),
-    //   waste_stream: new WasteStreamEntity(),
-    //   service_provider: new ServiceProviderEntity(),
-    //   pickup_date: pickupDate,
-    // });
+    const wasteStream = await this.wasteStreamRepository.findById(streamId);
 
-    // this.customerRepository.save(customer);
+    if (!wasteStream) {
+      return {
+        error: 'Waste stream not found',
+      };
+    }
 
-    return customer;
+    const availableServiceProviders = await this.serviceProviderAvailabilityService
+      .findAvailabilityAt(customer.postal_code, pickupDate);
+
+    const isServiceProviderAvailable = availableServiceProviders.some(provider => 
+      provider.serviceProviderName === serviceProvider.name && provider.wasteStreamLabel === wasteStream.label
+    );
+
+    if (!isServiceProviderAvailable) {
+      return {
+        error: 'The selected service provider or waste stream is not available at this postal code and date',
+      };
+    }
+
+    const registeredStreamPickup = new RegisteredStreamPickupEntity();
+    registeredStreamPickup.customer = customer;
+    registeredStreamPickup.waste_stream = wasteStream;
+    registeredStreamPickup.service_provider = serviceProvider;
+    registeredStreamPickup.pickup_date = pickupDate;
+
+    await this.registeredStreamPickupRepository.save(registeredStreamPickup);
+
+    return registeredStreamPickup;
   }
 }

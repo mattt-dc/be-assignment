@@ -3,15 +3,35 @@ import { CustomerRepository } from '../../providers/adapters/customer.repository
 import { WasteStreamEntity } from '../../providers/entities/waste_stream.entity';
 import { ServiceProviderEntity } from '../../providers/entities/service_provider.entity';
 import { CustomerEntity } from 'src/providers/entities/customer.entity';
+import { ServiceProviderRepository } from 'src/providers/adapters/service_provider.repository';
+import { WasteStreamRepository } from 'src/providers/adapters/waste_stream.repository';
+import { RegisteredStreamPickupRepository } from 'src/providers/adapters/registered_stream_pickup.repository';
+import { ServiceProviderAvailabilityService } from '../availability/service_provider_availability.service';
+import { RegisteredStreamPickupEntity } from 'src/providers/entities/registered_stream_pickup.entity';
 
 //3. Testability
 describe('RegisterStreamService', () => {
-  let customerRepository: CustomerRepository;
   let registerStreamService: RegisterStreamService;
+  let customerRepository: CustomerRepository;
+  let serviceProviderRepository: ServiceProviderRepository;
+  let wasteStreamRepository: WasteStreamRepository;
+  let registeredStreamPickupRepository: RegisteredStreamPickupRepository;
+  let serviceProviderAvailabilityService: ServiceProviderAvailabilityService;
 
   beforeEach(() => {
     customerRepository = new CustomerRepository(CustomerEntity);
-    registerStreamService = new RegisterStreamService(customerRepository);
+    serviceProviderRepository = new ServiceProviderRepository(ServiceProviderEntity);
+    wasteStreamRepository = new WasteStreamRepository(WasteStreamEntity);
+    registeredStreamPickupRepository = new RegisteredStreamPickupRepository(RegisteredStreamPickupEntity);
+    serviceProviderAvailabilityService = new ServiceProviderAvailabilityService(serviceProviderRepository);
+
+    registerStreamService = new RegisterStreamService(
+      customerRepository,
+      serviceProviderRepository,
+      wasteStreamRepository,
+      registeredStreamPickupRepository,
+      serviceProviderAvailabilityService
+    );
   });
 
   afterEach(() => {
