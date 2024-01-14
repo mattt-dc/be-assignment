@@ -1,5 +1,4 @@
 import { DataType, newDb } from 'pg-mem';
-import { Connection } from 'typeorm';
 import { v4 as uuidv4 } from 'uuid';
 import { CustomerEntity } from '../entities/customer.entity';
 import { RegisteredStreamPickupEntity } from '../entities/registered_stream_pickup.entity';
@@ -7,8 +6,9 @@ import { ServiceProviderCoverageEntity } from '../entities/service_provider_cove
 import { ServiceProviderEntity } from '../entities/service_provider.entity';
 import { WasteStreamEntity } from '../entities/waste_stream.entity';
 import { seedDatabase } from './db_seed';
+import { Connection } from 'typeorm';
 
-export async function getDbClient() {
+export async function getDbClient(): Promise<Connection> {
     const db = newDb();
     db.public.registerFunction({
         implementation: () => 'test',

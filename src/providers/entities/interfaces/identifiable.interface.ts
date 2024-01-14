@@ -1,3 +1,3 @@
-interface Identifiable {
+export interface Identifiable {
     id: string;
 }

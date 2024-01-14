@@ -35,7 +35,7 @@ class App {
     this.init();
   }
 
-  async init() {
+  async init(): Promise<void> {
     this.connection = await getDbClient();
 
     this.customerRepository = new CustomerRepository(CustomerEntity);
@@ -58,11 +58,11 @@ class App {
     await this.test();
   }
 
-  async stop() {
+  async stop(): Promise<void> {
     await this.connection.destroy();
   }
 
-  async test() {
+  async test(): Promise<void> {
     const results = await Promise.all([
       this.serviceProviderAvailabilityService.findAvailabilityAt('1010', new Date('2023-10-02')),
       this.serviceProviderAvailabilityService.findAvailabilityAt('1010', new Date('2023-10-04')),

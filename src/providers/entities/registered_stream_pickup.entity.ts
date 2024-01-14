@@ -2,6 +2,7 @@ import { Entity, PrimaryGeneratedColumn, Column, ManyToOne, JoinColumn } from 't
 import { CustomerEntity } from './customer.entity';
 import { WasteStreamEntity } from './waste_stream.entity';
 import { ServiceProviderEntity } from './service_provider.entity';
+import { Identifiable } from './interfaces/identifiable.interface';
 
 @Entity()
 export class RegisteredStreamPickupEntity implements Identifiable {

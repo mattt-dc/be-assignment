@@ -1,6 +1,7 @@
 import { Entity, PrimaryGeneratedColumn, Column, OneToMany } from 'typeorm';
 import { ServiceProviderCoverageEntity } from './service_provider_coverage.entity';
 import { RegisteredStreamPickupEntity } from './registered_stream_pickup.entity';
+import { Identifiable } from './interfaces/identifiable.interface';
 
 @Entity()
 export class ServiceProviderEntity implements Identifiable {

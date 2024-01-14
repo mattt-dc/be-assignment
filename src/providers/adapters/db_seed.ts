@@ -1,7 +1,7 @@
 import { Connection } from 'typeorm';
 import { Weekday } from '../entities/service_provider_coverage.entity';
 
-export async function seedDatabase(connection: Connection) {
+export async function seedDatabase(connection: Connection): Promise<void> {
     
     const wasteStreams = [
         { label: 'paper', category: 'recyclable', id: 'de10e229-d599-4c1d-bfba-dc041f5eace4' },

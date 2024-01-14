@@ -1,6 +1,7 @@
 import { Entity, PrimaryGeneratedColumn, Column, ManyToOne, JoinColumn } from 'typeorm';
 import { ServiceProviderEntity } from './service_provider.entity';
 import { WasteStreamEntity } from './waste_stream.entity';
+import { Identifiable } from './interfaces/identifiable.interface';
 
 export enum Weekday {
   Monday = 1,

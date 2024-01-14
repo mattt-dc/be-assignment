@@ -1,5 +1,6 @@
 import { Entity, PrimaryGeneratedColumn, Column, OneToMany } from 'typeorm';
 import { RegisteredStreamPickupEntity } from './registered_stream_pickup.entity';
+import { Identifiable } from './interfaces/identifiable.interface';
 
 @Entity()
 export class CustomerEntity implements Identifiable {

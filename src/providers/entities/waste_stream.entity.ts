@@ -1,4 +1,5 @@
 import { Entity, PrimaryGeneratedColumn, Column } from 'typeorm';
+import { Identifiable } from './interfaces/identifiable.interface';
 
 export enum WasteStreamCategory {
   hazardous = 'hazardous',
