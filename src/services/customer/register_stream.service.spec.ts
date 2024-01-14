@@ -11,18 +11,18 @@ import { RegisteredStreamPickupEntity } from '../../providers/entities/registere
 
 describe('RegisterStreamService', () => {
   let registerStreamService: RegisterStreamService;
-  let customerRepository: CustomerRepository;
-  let serviceProviderRepository: ServiceProviderRepository;
-  let wasteStreamRepository: WasteStreamRepository;
-  let registeredStreamPickupRepository: RegisteredStreamPickupRepository;
-  let serviceProviderAvailabilityService: ServiceProviderAvailabilityService;
+  let customerRepository: jest.Mocked<CustomerRepository>;
+  let serviceProviderRepository: jest.Mocked<ServiceProviderRepository>;
+  let wasteStreamRepository: jest.Mocked<WasteStreamRepository>;
+  let registeredStreamPickupRepository: jest.Mocked<RegisteredStreamPickupRepository>;
+  let serviceProviderAvailabilityService: jest.Mocked<ServiceProviderAvailabilityService>;
 
   beforeEach(() => {
-    customerRepository = new CustomerRepository(CustomerEntity);
-    serviceProviderRepository = new ServiceProviderRepository(ServiceProviderEntity);
-    wasteStreamRepository = new WasteStreamRepository(WasteStreamEntity);
-    registeredStreamPickupRepository = new RegisteredStreamPickupRepository(RegisteredStreamPickupEntity);
-    serviceProviderAvailabilityService = new ServiceProviderAvailabilityService(serviceProviderRepository);
+    customerRepository = { findById: jest.fn(), } as any;
+    serviceProviderRepository = { findById: jest.fn(), } as any;
+    wasteStreamRepository = { findById: jest.fn(), } as any;
+    registeredStreamPickupRepository = { save: jest.fn(), } as any;
+    serviceProviderAvailabilityService = { findAvailabilityAt: jest.fn(), } as any;
 
     registerStreamService = new RegisterStreamService(
       customerRepository,
@@ -39,7 +39,7 @@ describe('RegisterStreamService', () => {
 
   describe('registerStream', () => {
     it(`should return an error response if the customer doesn't exist`, async () => {
-      jest.spyOn(customerRepository, 'findById').mockResolvedValueOnce(null);
+      customerRepository.findById.mockResolvedValue(null);
   
       const response = await registerStreamService.registerStream(
         'customer-id',
@@ -59,7 +59,9 @@ describe('RegisterStreamService', () => {
     });
 
     it(`should return an error response if the stream doesn't exist`, async () => {
-      jest.spyOn(wasteStreamRepository, 'findById').mockResolvedValueOnce(null);
+      customerRepository.findById.mockResolvedValue(new CustomerEntity());
+      serviceProviderRepository.findById.mockResolvedValue(new ServiceProviderEntity());
+      wasteStreamRepository.findById.mockResolvedValueOnce(null);
   
       const response = await registerStreamService.registerStream(
         'customer-id',
@@ -78,7 +80,8 @@ describe('RegisterStreamService', () => {
     });
 
     it(`should return an error response if the service provider doesn't exist`, async () => {
-      jest.spyOn(serviceProviderRepository, 'findById').mockResolvedValueOnce(null);
+      customerRepository.findById.mockResolvedValue(new CustomerEntity());
+      serviceProviderRepository.findById.mockResolvedValueOnce(null);
   
       const response = await registerStreamService.registerStream(
         'customer-id',
@@ -97,7 +100,10 @@ describe('RegisterStreamService', () => {
     });
 
     it(`should return an error response if the pickup date is not available for the service provider`, async () => {
-      jest.spyOn(serviceProviderAvailabilityService, 'findAvailabilityAt').mockResolvedValueOnce([]);
+      customerRepository.findById.mockResolvedValue(new CustomerEntity());
+      serviceProviderRepository.findById.mockResolvedValue(new ServiceProviderEntity());
+      wasteStreamRepository.findById.mockResolvedValueOnce(new WasteStreamEntity());
+      serviceProviderAvailabilityService.findAvailabilityAt.mockResolvedValueOnce([]);
   
       const response = await registerStreamService.registerStream(
         'customer-id',
@@ -116,33 +122,35 @@ describe('RegisterStreamService', () => {
     });
 
     it(`should register the stream`, async () => {
-      jest.spyOn(customerRepository, 'findById').mockResolvedValueOnce({
-        id: 'customer-id',
-        name: 'customer-name',
-        address: 'customer-address',
-        postal_code: 'customer-postal-code',
-        registered_stream_pickups: [],
-      });
+      customerRepository.findById.mockResolvedValue(new CustomerEntity());
+      const serviceProvider = new ServiceProviderEntity();
+      serviceProvider.id = 'service-provider-id';
+      serviceProvider.name = 'service-provider-name';
+      serviceProviderRepository.findById.mockResolvedValue(serviceProvider);
+      const wasteStream = new WasteStreamEntity();
+      wasteStream.id = 'stream-id';
+      wasteStream.label = 'stream-name';
+      wasteStreamRepository.findById.mockResolvedValueOnce(wasteStream);
     
-      jest.spyOn(wasteStreamRepository, 'findById').mockResolvedValueOnce(new WasteStreamEntity());
-    
-      jest.spyOn(serviceProviderRepository, 'findById').mockResolvedValueOnce(new ServiceProviderEntity());
-    
-      jest.spyOn(serviceProviderAvailabilityService, 'findAvailabilityAt').mockResolvedValueOnce([
+      serviceProviderAvailabilityService.findAvailabilityAt.mockResolvedValueOnce([
         {
-          serviceProviderName: 'service-provider-name',
-          wasteStreamLabel: 'stream-name',
+          serviceProviderName: serviceProvider.name,
+          wasteStreamLabel: wasteStream.label,
         },
       ]);
     
       const registeredStreamPickup = new RegisteredStreamPickupEntity();
-      jest.spyOn(registeredStreamPickupRepository, 'save').mockResolvedValueOnce();
+      registeredStreamPickup.customer = new CustomerEntity();
+      registeredStreamPickup.service_provider = serviceProvider;
+      registeredStreamPickup.waste_stream = wasteStream;
+      registeredStreamPickup.pickup_date = new Date('2023-01-02');
+      registeredStreamPickupRepository.save.mockResolvedValueOnce();
     
       const response = await registerStreamService.registerStream(
-        'customer-id',
-        'stream-id',
-        'service-provider-id',
-        new Date('2023-01-02'),
+        registeredStreamPickup.customer.id,
+        registeredStreamPickup.waste_stream.id,
+        registeredStreamPickup.service_provider.id,
+        registeredStreamPickup.pickup_date,
       );
     
       expect(response).toEqual({
