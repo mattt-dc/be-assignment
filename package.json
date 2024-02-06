@@ -1,8 +1,8 @@
 {
-  "name": "seenons-be-assignment",
+  "name": "be-assignment",
   "version": "1.0.0",
-  "description": "Seenons Backend assignment",
-  "author": "Seenons",
+  "description": "Backend assignment",
+  "author": "mattt-dc",
   "main": "dist/src/app/js",
   "scripts": {
     "prebuild": "rimraf dist",

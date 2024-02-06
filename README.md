@@ -1,4 +1,4 @@
-# Seenons Backend Assignment
+# Backend Assignment
 
 ## Steps Taken
 
